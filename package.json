@@ -1,0 +1,66 @@
+{
+  "name": "ngn-plugin",
+  "version": "1.0.0",
+  "description": "A plugin module for NGN.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "npm run test:node && npm run test:deno && npm run test:browser && npm run report:syntax && npm run report:size",
+    "start": "dev workspace",
+    "build": "dev build",
+    "test:node": "dev test -rt node tests/*.js",
+    "test:deno": "dev test -rt deno tests/*.js",
+    "test:browser": "dev test -rt browser tests/*.js",
+    "manually": "dev test -rt manual tests/*.js",
+    "report:syntax": "dev report syntax --pretty",
+    "report:size": "dev report size ./.dist/**/*.js ./.dist/**/*.js.map",
+    "report:compat": "dev report compatibility ./src/**/*.js"
+  },
+  "type": "module",
+  "author": {
+    "name": "Corey Butler",
+    "url": "http://coreybutler.com"
+  },
+  "contributors": [
+    {
+      "name": "Ecor Ventures",
+      "url": "https://ecorventures.com"
+    },
+    {
+      "name": "Graham Butler",
+      "url": "http://grahambutler.com"
+    }
+  ],
+  "private": false,
+  "license": "MIT",
+  "homepage": "https://github.com/ngnjs/plugin",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ngnjs/plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ngnjs/plugin/issues"
+  },
+  "devDependencies": {
+    "@author.io/dev": "^1.0.12"
+  },
+  "standard": {
+    "globals": [
+      "window",
+      "globalThis",
+      "global",
+      "MutationObserver",
+      "DOMParser",
+      "XMLHttpRequest",
+      "FormData",
+      "btoa",
+      "localStorage",
+      "Request",
+      "Response",
+      "Headers",
+      "fetch",
+      "Element",
+      "HTMLElement",
+      "NodeFilter"
+    ]
+  }
+}

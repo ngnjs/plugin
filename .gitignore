@@ -1,0 +1,16 @@
+*.log
+_*
+.*
+*.old
+env.json
+/**//env.json
+node_modules
+!.github
+!.gitignore
+!.npmignore
+!.dockerignore
+!.*rc
+!.*.yml
+!.npmrc
+.dist
+/**/browsercompat*.json
