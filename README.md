@@ -30,3 +30,31 @@ Let's deconstruct the code above.
 1. Next, notice the class extends the `NGN.EventEmitter` class, which is a part of the [NGN core](https://github.com/ngnjs/ngn) library.
 
 1. Finally, the optional last line exposes the new module to NGN, making it available for use in other modules.
+
+## Additonal Features
+
+It is also possible to require specific components from an NGN environment, use different versions, & require a minimum version. See the unit tests for working examples.
+
+### Requiring a NGN Component (Dependency)
+
+It is possible to require a specific feature, which includes features added by other plugins.
+
+```javascript
+const NGN = new Reference()
+
+// Does nothing (No-op) since both items existin the NGN core.
+NGN.requires('EventEmitter', 'Middleware') 
+
+// Throws an error
+NGN.requires('DoesNotExist')
+```
+
+### Require a minimum NGN version
+
+To require a minimum version, use the `min` function.
+
+```javascript
+const NGN = new Reference()
+
+NGN.min('2.0.0') // Throws an error if and only if  NGN < 2.0.0
+```
