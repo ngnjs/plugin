@@ -9,8 +9,7 @@ const priv = (value, writable = false) => {
   }
 }
 
-// Thanks to https://github.com/sindresorhus/semver-regex/blob/master/index.js
-const SEMVER = /(\d)\.(\d)\.(\d)(.*)?/i
+const SEMVER = /(\d+)\.(\d+)\.(\d+)(.*)?/i
 
 export default class Reference {
   constructor (version = null) {
@@ -28,37 +27,49 @@ export default class Reference {
 
         return reference.get('INSTANCE')
       }),
-      base: priv(this.use(version), true),
-      ref: priv(null, true)
+      base: priv(null, true),
+      ref: priv(null, true),
+      proxy: priv(null, true)
     })
 
-    return new Proxy(this, {
+    this.use(version)
+
+    const me = this
+    this.proxy = new Proxy(this.base, {
       get (target, property) {
-        if (this.base[property] !== undefined) {
-          return this.base[property]
+        if (me.base[property] !== undefined) {
+          return me.base[property]
         }
 
-        if (this.ref) {
-          const plugins = globalThis[this.ref].get('PLUGINS') || new Map()
+        if (me.ref) {
+          const plugins = globalThis[me.ref].get('PLUGINS') || new Map()
           if (plugins.has(property)) {
             return plugins.get(property)
           }
         }
 
-        return target[property]
+        return me[property]
       },
 
       set (target, property, value) {
-        if (this.ref === null) {
+        if (me.ref === null) {
           throw new Error('Cannot find NGN.')
         }
 
-        const plugins = globalThis[this.ref].get('plugins') || new Map()
+        const plugins = globalThis[me.ref].get('plugins') || new Map()
 
         plugins.set(property, value)
-        globalThis[this.ref].set('PLUGINS', plugins)
+        globalThis[me.ref].set('PLUGINS', plugins)
+      },
+
+      ownKeys () {
+        return Reflect.ownKeys(me.base)
       }
     })
+
+    Object.freeze(this.proxy)
+
+    return this.proxy
   }
 
   // Use a specific version of NGN
@@ -90,8 +101,9 @@ export default class Reference {
     }
 
     this.ref = options.pop()
+    this.base = this.instance(this.ref)
 
-    return this.instance(this.ref)
+    return this.proxy
   }
 
   /**
@@ -120,7 +132,7 @@ export default class Reference {
     }
 
     if (!this.exist(...arguments)) {
-      throw new Error(`The follow NGN element are required but not present in the environment: ${Array.from(arguments).join(', ')}. Make sure these have been imported.`)
+      throw new Error(`The following NGN elements are required but not present in the environment: ${Array.from(arguments).join(', ')}. Make sure these have been imported.`)
     }
   }
 
@@ -155,33 +167,33 @@ export default class Reference {
       }, this.base)
 
       if (element !== undefined) {
-        return false
+        return true
       }
     }
 
-    return true
+    return false
   }
 
   min (version) {
-    if (!version) {
-      return
+    if (version) {
+      if (!this.base) {
+        throw new Error('NGN is not available or was not imported.')
+      }
+
+      const required = SEMVER.exec(version)
+      if (!required) {
+        throw new Error(`"${version}" is not a valid semantic version (invalid format)`)
+      }
+
+      const ngn = SEMVER.exec(this.base.version)
+
+      // Do not combine these into a single line.
+      // The multiline format respects semver cascading.
+      if (parseInt(required[0], 10) <= parseInt(ngn[0], 10)) { return } //eslint-disable-line
+      else if (parseInt(required[0], 10) <= parseInt(ngn[0], 10)) { return } //eslint-disable-line
+      else if (parseInt(required[1], 10) <= parseInt(ngn[1], 10)) { return }
+
+      throw new Error(`NGN v${version} is required. Found (v${this.base.version}). Please update.`)
     }
-
-    if (!this.base) {
-      throw new Error('NGN is not available or was not imported.')
-    }
-
-    const required = SEMVER.exec(version)
-    if (!required) {
-      throw new Error(`"${version}" is not a valid semantic version (invalid format)`)
-    }
-
-    const ngn = SEMVER.exec(this.base.version)
-
-    if (required[0] < ngn[0]) { return }
-    if (required[1] < ngn[1]) { return }
-    if (required[2] <= ngn[2]) { return }
-
-    throw new Error(`NGN v${version} is required. An older version was found (v${this.base.version}). Please update.`)
   }
 }

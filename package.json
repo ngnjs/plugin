@@ -1,6 +1,6 @@
 {
   "name": "ngn-plugin",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha",
   "description": "A plugin module for NGN.",
   "main": "src/index.js",
   "scripts": {
@@ -39,6 +39,19 @@
   },
   "bugs": {
     "url": "https://github.com/ngnjs/plugin/issues"
+  },
+  "dev": {
+    "mode": "source",
+    "source": {
+      "volume": [
+        "./node_modules/ngn:/node_modules/ngn"
+      ]
+    },
+    "release": {
+      "volume": [
+        "./node_modules/ngn:/source/ngn"
+      ]
+    }
   },
   "devDependencies": {
     "@author.io/dev": "^1.0.12"
