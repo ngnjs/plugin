@@ -64,7 +64,8 @@ jobs:
         id: build_release
         if: steps.create_release.outputs.id != ''
         run: |
-          npm i
+          npm i --production
+          npm i -g @author.io/dev
           npm run build --if-present
           for d in .dist/*/*/ ; do tar -cvzf ${d%%/}-${{ steps.autotagger.outputs.version }}.tar.gz ${d%%}*; done;
           if [[ ${{ github.ref }} == *"-"* ]]; then echo ::set-output isprerelease=true;else echo ::set-output isprerelease=false;fi
