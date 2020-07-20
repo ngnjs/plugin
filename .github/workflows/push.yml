@@ -64,6 +64,7 @@ jobs:
         id: build_release
         if: steps.create_release.outputs.id != ''
         run: |
+          node -v
           npm i --production
           npm i @author.io/dev
           npm run build --if-present
