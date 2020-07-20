@@ -54,9 +54,10 @@ jobs:
       
         # Login and prepare the process to use the base image from Github packages.
       - if: steps.create_release.outputs.id != ''
+        name: Github Package Registry Authentication
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u $GITHUB_ACTOR --password-stdin
-          node -e "const fs=require('fs'),path=require('path');const pkg=require('package.json');pkg.dev=pkg.dev||{};pkg.dev.image='docker.pkg.github.com/author/dev/dev-';fs.writeFileSync('./package.json',JSON.stringify(pkg));"
+          node -e "const fs=require('fs'),path=require('path');const pkg=require('./package.json');pkg.dev=pkg.dev||{};pkg.dev.image='docker.pkg.github.com/author/dev/dev-';fs.writeFileSync('./package.json',JSON.stringify(pkg));"
 
         # Build tarballs of the module code.
       - name: Build Release Artifacts
