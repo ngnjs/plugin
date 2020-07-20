@@ -43,7 +43,7 @@ It is possible to require a specific feature, which includes features added by o
 const NGN = new Reference()
 
 // Does nothing (No-op) since both items existin the NGN core.
-NGN.requires('EventEmitter', 'Middleware') 
+NGN.requires('EventEmitter', 'Middleware')
 
 // Throws an error
 NGN.requires('DoesNotExist')

@@ -54,7 +54,8 @@
     }
   },
   "devDependencies": {
-    "@author.io/dev": "^1.0.12"
+    "@author.io/dev": "^1.0.15",
+    "ngn-plugin-debug": "^1.0.0-alpha"
   },
   "standard": {
     "globals": [
@@ -75,5 +76,9 @@
       "HTMLElement",
       "NodeFilter"
     ]
-  }
+  },
+  "peerDependencies": {
+    "ngn": "^2.0.0"
+  },
+  "dependencies": {}
 }
