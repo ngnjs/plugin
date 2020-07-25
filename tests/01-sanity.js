@@ -1,6 +1,6 @@
 import test from 'tappedout'
 import ngn from 'ngn'
-import Reference from 'ngn-plugin'
+import Reference from '@ngnjs/plugin'
 
 test('Sanity', t => {
   if (!ngn) {

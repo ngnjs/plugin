@@ -1,5 +1,5 @@
 {
-  "name": "ngn-plugin",
+  "name": "@ngnjs/plugin",
   "version": "1.0.0-alpha",
   "description": "A plugin module for NGN.",
   "main": "src/index.js",
@@ -49,13 +49,13 @@
     "source": {
       "alias": {
         "ngn": "/node_modules/ngn/index.js",
-        "ngn-plugin": "/app/.dist/ngn-plugin/index.js"
+        "@ngnjs/plugin": "/app/.dist/plugin/index.js"
       }
     }
   },
   "devDependencies": {
     "@author.io/dev": "^1.0.15",
-    "ngn-plugin-debug": "^1.0.0-alpha"
+    "@ngnjs/plugin-debug": "^1.0.0-alpha"
   },
   "standard": {
     "globals": [
