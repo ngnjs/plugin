@@ -137,19 +137,9 @@ export default class SV {
   // }
 
   static sort () {
-    const list = new Set(Array.from(arguments)
+    return Array.from(new Set(Array.from(arguments)
       .map(v => v instanceof Version ? v : new Version(v))
-      .sort((a, b) => {
-        if (SV.gt(a, b)) {
-          return -1
-        } else if (SV.lt(a, b)) {
-          return 1
-        }
-
-        return 0
-      }))
-
-    return Array.from(list)
+      .sort((a, b) => SV.gt(a, b) ? -1 : (SV.lt(a, b) ? 1 : 0))))
   }
 
   static select (pattern) {

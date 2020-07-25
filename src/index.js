@@ -15,17 +15,15 @@ export default class Reference {
   constructor (version = null) {
     Object.defineProperties(this, {
       instance: priv(reference => {
-        if (!globalThis[reference]) {
-          return null
+        if (globalThis[reference]) {
+          reference = globalThis[reference]
+
+          if (reference instanceof Map && reference.has('INSTANCE')) {
+            return reference.get('INSTANCE')
+          }
         }
 
-        reference = globalThis[reference]
-
-        if (!(reference instanceof Map) || !reference.has('INSTANCE')) {
-          return null
-        }
-
-        return reference.get('INSTANCE')
+        return null
       }),
       base: priv({}, true),
       ref: priv(null, true),
@@ -37,8 +35,8 @@ export default class Reference {
     const me = this
     this.proxy = new Proxy(this.base, {
       get (target, property) {
-        if (me.base[property] !== undefined) {
-          return me.base[property]
+        if (target[property] !== undefined) {
+          return target[property]
         }
 
         if (me.ref) {
@@ -101,13 +99,7 @@ export default class Reference {
 
     if (version) {
       version = Semver.select(version, ...options.map(id => globalThis[id].get('VERSION')))
-      options = options.filter(id => {
-        if (globalThis[id] instanceof Map) {
-          return version === globalThis[id].get('VERSION')
-        }
-
-        return false
-      })
+      options = options.filter(id => globalThis[id] instanceof Map && version === globalThis[id].get('VERSION'))
     }
 
     if (options.length === 0) {
@@ -137,23 +129,21 @@ export default class Reference {
    * A comma-separated list of required elements.
    */
   requires () {
-    if (arguments.length === 0) {
-      return
-    }
-
-    if (this.base === null) {
-      throw new Error('NGN is required.')
-    }
-
-    const missing = new Set()
-    for (const el of arguments) {
-      if (!this.exist(el)) {
-        missing.add(el)
+    if (arguments.length > 0) {
+      if (this.base === null) {
+        throw new Error('NGN is required.')
       }
-    }
 
-    if (missing.size > 0) {
-      throw new Error(`The following NGN elements are required but not present in the environment: ${Array.from(missing).join(', ')}. Make sure these have been imported.`)
+      const missing = new Set()
+      for (const el of arguments) {
+        if (!this.exist(el)) {
+          missing.add(el)
+        }
+      }
+
+      if (missing.size > 0) {
+        throw new Error(`The following NGN elements are required but not present in the environment: ${Array.from(missing).join(', ')}. Make sure these have been imported.`)
+      }
     }
   }
 
@@ -176,10 +166,6 @@ export default class Reference {
    */
   exist () {
     for (const component of arguments) {
-      if (typeof component !== 'string') {
-        throw new Error('The plugin/reference require() method only accepts string values.')
-      }
-
       let Element = component.split('.').reduceRight((acc, el) => {
         if (acc[el] === undefined) {
           acc = acc[el]
