@@ -1,6 +1,6 @@
 import test from 'tappedout'
 import ngn from 'ngn'
-import Reference from '/app/.dist/ngn-plugin/index.js'
+import Reference from 'ngn-plugin'
 
 test('Sanity', t => {
   if (!ngn) {
@@ -10,12 +10,11 @@ test('Sanity', t => {
   t.ok(typeof Reference === 'function', 'Reference class exists.')
   t.ok(typeof (new Reference()) === 'object', 'Reference avialable as an object.')
   // t.ok((new Reference()) instanceof Reference, 'Reference recognized as an instance of the plugin.')
-  
+
   const NGN = new Reference()
-  t.ok(typeof NGN.requires === 'function', 'Recognize the requires function')
-  t.ok(typeof NGN.exist === 'function', 'Recognize the exist function')
-  t.ok(typeof NGN.use === 'function', 'Recognize the use function')
-  t.ok(typeof NGN.min === 'function', 'Recognize the min function')
+  t.ok(typeof NGN.requires === 'function', 'Recognize the "requires" function')
+  t.ok(typeof NGN.exist === 'function', 'Recognize the "exist" function')
+  t.ok(typeof NGN.use === 'function', 'Recognize the "use" function')
 
   t.end()
 })
@@ -29,7 +28,7 @@ test('Basic Usage', t => {
   let ee
   t.doesNotThrow(() => {
     class TestEmitter extends NGN.EventEmitter {
-      constructor() {
+      constructor () {
         super()
         count++
       }
@@ -58,14 +57,14 @@ test('Requiring Components', t => {
 })
 
 test('Minimum Versions', t => {
-  const NGN = new Reference()
+  const version = (new Reference()).version
 
   t.doesNotThrow(() => {
-    NGN.min(NGN.version)
+    const NGN = new Reference('>=' + version)
   }, 'Does not throw an error when the minimum required version is available.')
 
   t.throws(() => {
-    NGN.min('1000.0.0')
+    const NGN = new Reference('>=1000.0.0')
   }, 'Throws an error when the minimum required version is not available.')
 
   t.end()

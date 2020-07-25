@@ -1,3 +1,5 @@
+import Semver from './semver.js'
+
 const ID = Symbol.for('NGN')
 
 const priv = (value, writable = false) => {
@@ -8,8 +10,6 @@ const priv = (value, writable = false) => {
     value
   }
 }
-
-const SEMVER = /(\d+)\.(\d+)\.(\d+)(.*)?/i
 
 export default class Reference {
   constructor (version = null) {
@@ -27,7 +27,7 @@ export default class Reference {
 
         return reference.get('INSTANCE')
       }),
-      base: priv(null, true),
+      base: priv({}, true),
       ref: priv(null, true),
       proxy: priv(null, true)
     })
@@ -60,11 +60,11 @@ export default class Reference {
 
         plugins.set(property, value)
         globalThis[me.ref].set('PLUGINS', plugins)
-      },
-
-      ownKeys () {
-        return Reflect.ownKeys(me.base)
       }
+
+      // ownKeys () {
+      //   return Reflect.ownKeys(me.base)
+      // }
     })
 
     Object.freeze(this.proxy)
@@ -72,35 +72,49 @@ export default class Reference {
     return this.proxy
   }
 
-  // Use a specific version of NGN
-  use (version = null) {
+  get availableVersions () {
     let options = globalThis[ID] || []
 
     if (options.length === 0) {
       options = Object.getOwnPropertySymbols(globalThis).filter(s => globalThis[s] instanceof Map && globalThis[s].has('REFERENCE_ID') && globalThis[s].get('REFERENCE_ID') === s)
-
-      if (options.length === 0) {
-        return null
-      }
     }
 
-    if (options.length > 1 && version) {
+    return options
+  }
+
+  export (name) {
+    const plugins = globalThis[this.ref].get('plugins') || new Map()
+    const elements = new Set(Array.from(arguments).slice(1))
+
+    if (elements.size === 0) {
+      throw new Error('Missing arguments. Nothing was specified to export.')
+    }
+
+    plugins.set(name, Array.from(elements))
+
+    globalThis[this.ref].set('PLUGINS', plugins)
+  }
+
+  // Use a specific version of NGN
+  use (version = null) {
+    let options = this.availableVersions
+
+    if (version) {
+      version = Semver.select(version, ...options.map(id => globalThis[id].get('VERSION')))
       options = options.filter(id => {
-        if (globalThis[id]) {
-          if (globalThis[id] instanceof Map) {
-            return version === globalThis[id].get('VERSION')
-          }
+        if (globalThis[id] instanceof Map) {
+          return version === globalThis[id].get('VERSION')
         }
 
         return false
       })
-
-      if (options.length === 0) {
-        return null
-      }
     }
 
-    this.ref = options.pop()
+    if (options.length === 0) {
+      return null
+    }
+
+    this.ref = options.shift()
     this.base = this.instance(this.ref)
 
     return this.proxy
@@ -131,8 +145,15 @@ export default class Reference {
       throw new Error('NGN is required.')
     }
 
-    if (!this.exist(...arguments)) {
-      throw new Error(`The following NGN elements are required but not present in the environment: ${Array.from(arguments).join(', ')}. Make sure these have been imported.`)
+    const missing = new Set()
+    for (const el of arguments) {
+      if (!this.exist(el)) {
+        missing.add(el)
+      }
+    }
+
+    if (missing.size > 0) {
+      throw new Error(`The following NGN elements are required but not present in the environment: ${Array.from(missing).join(', ')}. Make sure these have been imported.`)
     }
   }
 
@@ -159,41 +180,50 @@ export default class Reference {
         throw new Error('The plugin/reference require() method only accepts string values.')
       }
 
-      const element = component.split('.').reduceRight((acc, el) => {
-        if (acc[el] !== undefined) {
+      let Element = component.split('.').reduceRight((acc, el) => {
+        if (acc[el] === undefined) {
           acc = acc[el]
           return acc
         }
+
+        return acc[el]
       }, this.base)
 
-      if (element !== undefined) {
-        return true
+      if (Element === undefined) {
+        Element = globalThis[component]
+
+        if (Element === undefined) {
+          return false
+        }
+
+        // If the element is undefined in NGN and is not a NGN custom exception, then it is not available.
+        if (typeof Element === 'function') {
+          try {
+            const e = new Element()
+            if (!(e instanceof Error)) {
+              return false
+            }
+          } catch (e) {
+            return false
+          }
+        }
       }
     }
 
-    return false
+    return true
   }
 
-  min (version) {
-    if (version) {
-      if (!this.base) {
-        throw new Error('NGN is not available or was not imported.')
-      }
+  /**
+   * Assure a specific version (exact match)
+   * @param {String} version
+   */
+  version (version) {
+    if (!this.base) {
+      throw new Error('NGN is not available or was not imported.')
+    }
 
-      const required = SEMVER.exec(version)
-      if (!required) {
-        throw new Error(`"${version}" is not a valid semantic version (invalid format)`)
-      }
-
-      const ngn = SEMVER.exec(this.base.version)
-
-      // Do not combine these into a single line.
-      // The multiline format respects semver cascading.
-      if (parseInt(required[0], 10) <= parseInt(ngn[0], 10)) { return } //eslint-disable-line
-      else if (parseInt(required[0], 10) <= parseInt(ngn[0], 10)) { return } //eslint-disable-line
-      else if (parseInt(required[1], 10) <= parseInt(ngn[1], 10)) { return }
-
-      throw new Error(`NGN v${version} is required. Found (v${this.base.version}). Please update.`)
+    if (version !== this.base.version) {
+      throw new Error(`NGN v${version} is required. Found v${this.base.version}`)
     }
   }
 }

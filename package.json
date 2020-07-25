@@ -42,15 +42,15 @@
   },
   "dev": {
     "mode": "source",
+    "volume": [
+      "../core/.dist/ngn:/node_modules/ngn",
+      "../core/src:/source/ngn"
+    ],
     "source": {
-      "volume": [
-        "./node_modules/ngn:/node_modules/ngn"
-      ]
-    },
-    "release": {
-      "volume": [
-        "./node_modules/ngn:/source/ngn"
-      ]
+      "alias": {
+        "ngn": "/node_modules/ngn/index.js",
+        "ngn-plugin": "/app/.dist/ngn-plugin/index.js"
+      }
     }
   },
   "devDependencies": {
