@@ -51,10 +51,70 @@ NGN.requires('DoesNotExist')
 
 ### Require a minimum NGN version
 
-To require a minimum version, use the `min` function.
+NGN references use the npm package nomenclature for defining minimum requirements.
+
+```javascript
+// A specific version
+const NGN = new Reference('2.0.0')
+
+// Any version in the 2.x.x range
+const NGN = new Reference('^2.0.0')
+
+// Any version in the 2.0.x range
+const NGN = new Reference('~2.0.0')
+
+// Anything greater than 2.0.0
+const NGN = new Reference('>2.0.0')
+
+// Anything greater than or equal to 2.0.0
+const NGN = new Reference('>=2.0.0')
+
+// Anything less than 2.0.0
+const NGN = new Reference('<2.0.0')
+
+// Anything less than or equal to 2.0.0
+const NGN = new Reference('<=2.0.0')
+```
+
+### Use a Specific Version
+
+It is possible to use more than one version of NGN if multiple versions are available. Remember, references were introduced in NGN 2.0.0. They are not available in the 1.x.x release line.
+
+```javascript
+const NGN = new Reference()
+const CURRENT = NGN.use('2.0.0')
+const BETA = NGN.use('2.1.0-beta')
+
+class MyPlugin extends CURRENT.EventEmitter {
+  ...
+}
+
+class MyNewPlugin extends BETA.EventEmitter {
+  ...
+}
+```
+
+### Export (Apply) Plugin to NGN
+
+References will always identify plugins within the referenced version of NGN, but sometimes users wish to use the original NGN namespace.
+
+For example:
+
+```javascript
+import NGN from 'https://domain.com/ngn/index.js'
+import MyPlugin from 'https://domain.com/plugin/index.js'
+
+console.log(NGN.MyPlugin)
+```
+
+To make this scenario work, the plugin needs to export itself to NGN. This can be done with a named reference:
 
 ```javascript
 const NGN = new Reference()
 
-NGN.min('2.0.0') // Throws an error if and only if  NGN < 2.0.0
+class CustomPlugin extends NGN.EventEmitter {
+  ...
+}
+
+NGN.export('MyPlugin', CustomPlugin)
 ```

@@ -212,18 +212,4 @@ export default class Reference {
 
     return true
   }
-
-  /**
-   * Assure a specific version (exact match)
-   * @param {String} version
-   */
-  version (version) {
-    if (!this.base) {
-      throw new Error('NGN is not available or was not imported.')
-    }
-
-    if (version !== this.base.version) {
-      throw new Error(`NGN v${version} is required. Found v${this.base.version}`)
-    }
-  }
 }
