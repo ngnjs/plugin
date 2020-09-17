@@ -13,7 +13,8 @@
     "manually": "dev test -rt manual tests/*.js",
     "report:syntax": "dev report syntax --pretty",
     "report:size": "dev report size ./.dist/**/*.js ./.dist/**/*.js.map",
-    "report:compat": "dev report compatibility ./src/**/*.js"
+    "report:compat": "dev report compatibility ./src/**/*.js",
+    "ci": "dev test --mode ci -rt node tests/*.js && dev test --mode ci -rt deno tests/*.js && dev test --mode ci -rt browser tests/*.js"
   },
   "type": "module",
   "author": {
@@ -42,11 +43,18 @@
   },
   "dev": {
     "mode": "source",
-    "volume": [
-      "../core/.dist/ngn:/node_modules/ngn",
-      "../core/src:/source/ngn"
-    ],
+    "ci": {
+      "peerDependencies": true,
+      "alias": {
+        "ngn": "/node_modules/ngn/index.js",
+        "@ngnjs/plugin": "/app/.dist/plugin/index.js"
+      }
+    },
     "source": {
+      "volume": [
+        "../core/.dist/ngn:/node_modules/ngn",
+        "../core/src:/source/ngn"
+      ],
       "alias": {
         "ngn": "/node_modules/ngn/index.js",
         "@ngnjs/plugin": "/app/.dist/plugin/index.js"

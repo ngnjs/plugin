@@ -26,7 +26,7 @@ jobs:
           key: ${{ runner.os }}-docker-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-docker-
-      
+
       - name: Load cached Docker layers
         run: |
           if [ -d "docker-cache" ]; then
@@ -42,17 +42,17 @@ jobs:
           base=$(sed -e 's/^"//' -e 's/"$//' <<<"$base")
           echo Retrieving author/dev/dev-base:$base
           docker pull author/dev-base:$base
-          
+
           deno=$(curl -L -s 'https://registry.hub.docker.com/v2/repositories/author/dev-deno/tags?page_size=1'|jq '."results"[]["name"]')
           deno=$(sed -e 's/^"//' -e 's/"$//' <<<"$deno")
           echo Retrieving author/dev/dev-deno:$deno
           docker pull author/dev-deno:$deno
-          
+
           browser=$(curl -L -s 'https://registry.hub.docker.com/v2/repositories/author/dev-browser/tags?page_size=1'|jq '."results"[]["name"]')
           browser=$(sed -e 's/^"//' -e 's/"$//' <<<"$browser")
           echo Retrieving author/dev/dev-browser:$browser
           docker pull author/dev-browser:$browser
-          
+
           node=$(curl -L -s 'https://registry.hub.docker.com/v2/repositories/author/dev-node/tags?page_size=1'|jq '."results"[]["name"]')
           node=$(sed -e 's/^"//' -e 's/"$//' <<<"$node")
           echo Retrieving author/dev/dev-node:$node
@@ -69,7 +69,7 @@ jobs:
       - name: Test
         if: success()
         run: |
-          npm test
+          npm run ci
 
       - name: Tag
         id: autotagger
@@ -84,7 +84,7 @@ jobs:
         if: steps.autotagger.outputs.tagname != ''
         run: |
           if [[ "${{ steps.autotagger.output.version }}" == *"-"* ]]; then echo "::set-env IS_PRERELEASE=true";else echo "::set-env IS_PRERELEASE=''";fi
-    
+
       - name: Release
         id: create_release
         if: steps.autotagger.outputs.tagname != ''
