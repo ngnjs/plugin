@@ -44,10 +44,6 @@
   "dev": {
     "mode": "source",
     "ci": {
-      "volume": [
-        "/Users/coreybutler/Documents/Workspace/OSS/js/@author.io/dev/image/runners/node.js:/utility/test/run-node.js",
-        "/Users/coreybutler/Documents/Workspace/OSS/js/@author.io/dev/image/app/test/utilities.js:/utility/test/utilities.js"
-      ],
       "peerdependencies": true,
       "alias": {
         "ngn": "/node_modules/ngn/index.js",
