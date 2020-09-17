@@ -44,7 +44,11 @@
   "dev": {
     "mode": "source",
     "ci": {
-      "peerDependencies": true,
+      "volume": [
+        "/Users/coreybutler/Documents/Workspace/OSS/js/@author.io/dev/image/runners/node.js:/utility/test/run-node.js",
+        "/Users/coreybutler/Documents/Workspace/OSS/js/@author.io/dev/image/app/test/utilities.js:/utility/test/utilities.js"
+      ],
+      "peerdependencies": true,
       "alias": {
         "ngn": "/node_modules/ngn/index.js",
         "@ngnjs/plugin": "/app/.dist/plugin/index.js"
@@ -86,7 +90,7 @@
     ]
   },
   "peerDependencies": {
-    "ngn": "^2.0.0"
+    "ngn": "^2.0.0-alpha.5"
   },
   "dependencies": {}
 }
