@@ -58,6 +58,7 @@ export default class Reference {
 
         plugins.set(property, value)
         globalThis[me.ref].set('PLUGINS', plugins)
+        return true
       }
 
       // ownKeys () {
