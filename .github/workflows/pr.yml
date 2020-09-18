@@ -88,4 +88,5 @@ jobs:
         if: success()
         run: |
           dev -v
+          npm i --production --prefix / ngn
           npm run ci

@@ -45,7 +45,6 @@
     "mode": "source",
     "ci": {
       "verbose": true,
-      "peerdependencies": true,
       "alias": {
         "ngn": "/node_modules/ngn/index.js",
         "@ngnjs/plugin": "/app/.dist/plugin/index.js"
