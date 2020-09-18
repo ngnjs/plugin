@@ -18,22 +18,22 @@ jobs:
         with:
           node-version: '14'
 
-      - uses: actions/cache@v2
-        name: Establish Docker Cache
-        id: cache
-        with:
-          path: docker-cache
-          key: ${{ runner.os }}-docker-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-docker-
+      # - uses: actions/cache@v2
+      #   name: Establish Docker Cache
+      #   id: cache
+      #   with:
+      #     path: docker-cache
+      #     key: ${{ runner.os }}-docker-${{ github.sha }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-docker-
 
-      - name: Load cached Docker layers
-        run: |
-          if [ -d "docker-cache" ]; then
-            cat docker-cache/x* > my-image.tar
-            docker load < my-image.tar
-            rm -rf docker-cache
-          fi
+      # - name: Load cached Docker layers
+      #   run: |
+      #     if [ -d "docker-cache" ]; then
+      #       cat docker-cache/x* > my-image.tar
+      #       docker load < my-image.tar
+      #       rm -rf docker-cache
+      #     fi
 
       - name: Setup Build Tooling
         id: setup
