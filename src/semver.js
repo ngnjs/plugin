@@ -16,7 +16,7 @@ class Version {
   }
 
   toString () {
-    return `${this.major}.${this.minor}.${this.patch}${this.prerelease || ''}`
+    return `${this.major}.${this.minor}.${this.patch}${this.prerelease ? '-' + this.prerelease : ''}`
   }
 
   get name () {
