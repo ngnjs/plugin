@@ -87,4 +87,5 @@ jobs:
       - name: Test
         if: success()
         run: |
+          dev -v
           npm run ci
