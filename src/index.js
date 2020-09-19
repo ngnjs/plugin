@@ -80,13 +80,7 @@ export default class Reference {
       options = Object.getOwnPropertySymbols(globalThis).filter(s => globalThis[s] instanceof Map && globalThis[s].has('REFERENCE_ID') && globalThis[s].get('REFERENCE_ID') === s)
     }
 
-    options.sort((a, b) => {
-      a = globalThis[a].get('VERSION')
-      b = globalThis[b].get('VERSION')
-      return Semver.gte(a, b) ? -1 : 1
-    })
-
-    return options
+    return options.sort((a, b) => Semver.gte(globalThis[a].get('VERSION'), globalThis[b].get('VERSION')) ? -1 : 1)
   }
 
   export (name) {
