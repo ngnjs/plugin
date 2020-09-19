@@ -11,6 +11,8 @@ const priv = (value, writable = false) => {
   }
 }
 
+export { Semver }
+
 export default class Reference {
   constructor (version = null) {
     Object.defineProperties(this, {
