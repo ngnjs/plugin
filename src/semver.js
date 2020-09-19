@@ -111,11 +111,28 @@ export default class SV {
     if (typeof a.subversion === typeof b.subversion && typeof a.subversion === 'string') {
       return a.subversion.length > b.subversions.length
     }
+    if (!a.prerelease && b.prerelease) { return true }
+    if (a.prerelease && !b.prerelease) { return false }
+    if (a.prerelease && b.prerelease) {
+      try {
+        const { aPrefix } = /^(<aPrefix>[^\d]+)/i.exec(a.prerelease).groups
+        const { bPrefix } = /^(<bPrefix>[^\d]+)/i.exec(b.prerelease).groups
+        if (aPrefix !== bPrefix) {
+          return aPrefix > bPrefix
+        }
+        const { aNum } = /(<aNum>^\d+)/i.exec(a.prerelease).groups
+        const { bNum } = /(<bNum>^\d+)/i.exec(b.prerelease).groups
+        return aNum === undefined ? false : (bNum === undefined ? true : (aNum === bNum ? false : aNum > bNum))
+      } catch (e) {
+        return a.prerelease > b.prerelease
+      }
+    }
+
     return true
   }
 
   static gte () {
-    return (SV.gt(...arguments) || SV.eq(...arguments))
+    return (SV.eq(...arguments) || SV.gt(...arguments))
   }
 
   static lt () {
@@ -123,12 +140,12 @@ export default class SV {
   }
 
   static lte () {
-    return (SV.lt(...arguments) || SV.eq(...arguments))
+    return (SV.eq(...arguments) || SV.lt(...arguments))
   }
 
   static eq () {
-    const { a, b } = normalize(arguments)
-    try { return a.toString() === b.toString() } catch (e) { return false }
+    const { a, b } = normalize(...arguments)
+    return a.toString() === b.toString()
   }
 
   // Only necessary when inc/dec are enabled.
