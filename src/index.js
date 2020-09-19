@@ -27,7 +27,8 @@ export default class Reference {
       }),
       base: priv({}, true),
       ref: priv(null, true),
-      proxy: priv(null, true)
+      proxy: priv(null, true),
+      referenceModuleVersion: priv('<#REPLACE_VERSION#>')
     })
 
     this.use(version)
@@ -82,7 +83,7 @@ export default class Reference {
     options.sort((a, b) => {
       a = globalThis[a].get('VERSION')
       b = globalThis[b].get('VERSION')
-      return Semver.lt(a, b) ? 1 : (Semver.gt(a, b) ? -1 : 0)
+      return Semver.gte(a, b) ? -1 : 1
     })
 
     return options

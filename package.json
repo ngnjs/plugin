@@ -1,8 +1,10 @@
 {
   "name": "@ngnjs/plugin",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "A plugin module for NGN.",
   "main": "src/index.js",
+  "module": "index.js",
+  "browser": "./index.js",
   "scripts": {
     "test": "npm run test:node && npm run test:deno && npm run test:browser && npm run report:syntax && npm run report:size",
     "start": "dev workspace",
@@ -43,6 +45,9 @@
   },
   "dev": {
     "mode": "source",
+    "replace": {
+      "<#REPLACE_VERSION#>": "package.version"
+    },
     "ci": {
       "verbose": true,
       "alias": {
