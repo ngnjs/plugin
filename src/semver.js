@@ -128,7 +128,7 @@ export default class SV {
 
   static eq () {
     const { a, b } = normalize(arguments)
-    return a.toString() === b.toString()
+    try { return a.toString() === b.toString() } catch (e) { return false }
   }
 
   // Only necessary when inc/dec are enabled.
