@@ -1,4 +1,5 @@
-# NGN Plugin ![npm (scoped)](https://img.shields.io/npm/v/@ngnjs/plugin?label=%40ngnjs%2Fplugin&logo=npm&style=social)
+<h1 align="center">NGN Plugins<br/><img src="https://img.shields.io/npm/v/@ngnjs/plugin?label=%40ngnjs/plugin&logo=npm&style=social"/></h1>
+
 
 [NGN](https://ngn.js.org) 2.0.0+ can be extended through plugins. A NGN plugin is a JavaScript module which depends on/extends an NGN module (or part of a module) within a _system_.
 
