@@ -16,7 +16,7 @@
     "report:syntax": "dev report syntax --pretty",
     "report:size": "dev report size ./.dist/**/*.js ./.dist/**/*.js.map",
     "report:compat": "dev report compatibility ./src/**/*.js",
-    "ci": "dev test --verbose --mode ci -rt node tests/*.js && dev test --mode ci --peer false -rt deno tests/*.js && dev test --mode ci --peer false -rt browser tests/*.js"
+    "ci": "dev test --verbose --peer --mode ci -rt node tests/*.js && dev test --mode ci --peer false -rt deno tests/*.js && dev test --mode ci --peer false -rt browser tests/*.js"
   },
   "type": "module",
   "author": {
@@ -73,7 +73,7 @@
     }
   },
   "devDependencies": {
-    "@author.io/dev": "^1.0.15",
+    "@author.io/dev": "^1.1.2",
     "@ngnjs/plugin-debug": "^1.0.0-alpha"
   },
   "standard": {

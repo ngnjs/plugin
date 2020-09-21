@@ -12,6 +12,7 @@ const priv = (value, writable = false) => {
 }
 
 export { Semver }
+export const moduleVersion = '<#REPLACE_VERSION#>'
 
 export default class Reference {
   constructor (version = null) {
@@ -29,8 +30,7 @@ export default class Reference {
       }),
       base: priv({}, true),
       ref: priv(null, true),
-      proxy: priv(null, true),
-      referenceModuleVersion: priv('<#REPLACE_VERSION#>')
+      proxy: priv(null, true)
     })
 
     this.use(version)
