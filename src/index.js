@@ -142,26 +142,31 @@ export default class Reference {
       const missing = new Set()
       for (const el of arguments) {
         if (el.indexOf(':') > 0 || !this.exist(el)) {
-          const { feature, version } = /(?<feature>[^:\n]+):?(?<version>\d+\.\d+\.\d+([-+].+)?)?/i.exec(el)
-          if (!this.base.plugins[feature]) {
-            missing.add(feature)
-          } else {
-            try {
-              const pv = typeof this.base.plugins[feature].version === 'function' ? typeof this.base.plugins[feature].version() : typeof this.base.plugins[feature].version
-              const v = Semver.select(version, pv)
+          const match = /(?<feature>[^:\n]+):?(?<version>\d+\.\d+\.\d+([-+].+)?)?/i.exec(el)
+          if (match) {
+            const { feature, version } = match.groups
 
-              if (v !== pv) {
+            if (!this.base.plugins[feature]) {
+              missing.add(feature)
+            } else {
+              try {
+                const pv = typeof this.base.plugins[feature].version === 'function' ? typeof this.base.plugins[feature].version() : typeof this.base.plugins[feature].version
+                const v = Semver.select(version, pv)
+
+                if (v !== pv) {
+                  missing.add(feature + '@' + version)
+                }
+              } catch (e) {
                 missing.add(feature + '@' + version)
               }
-            } catch (e) {
-              missing.add(feature + '@' + version)
             }
           }
         }
       }
 
       if (missing.size > 0) {
-        throw new Error(`The following NGN elements are required but not present in the environment: ${Array.from(missing).join(', ')}. Make sure these have been imported.`)
+        const msg = `The following NGN elements are required but not present in the environment: ${Array.from(missing).join(', ')}. Make sure these have been imported.`
+        throw new Error(msg)
       }
     }
 
